@@ -195,7 +195,7 @@ for transaction in transactions[str(year)]:
                 for item in data["items"]:
                     log_output += f" - {item}\n"
 
-            log_output += "-" * 106 + "\n"
+            log_output += "-" * 104 + "\n"
 
 st.markdown(""" 
 <style>
@@ -208,4 +208,4 @@ textarea {
 """, unsafe_allow_html=True)
 
 # Display log in a scrollable text area
-st.text_area("Transaction Log", value=log_output, height=500, max_chars=None, key="log", disabled=True)
+st.text_area("Transaction Log", value=log_output, height=400, max_chars=None, key="log", disabled=True)
