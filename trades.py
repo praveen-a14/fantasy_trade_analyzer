@@ -199,10 +199,12 @@ for transaction in transactions[str(year)]:
 
 st.markdown(""" 
 <style>
+.st-dd {
+    -webkit-text-fill-color: white;
+}
 textarea {
-    font-size: 20px !important;  /* Adjust font size */
-    color: #00ff00 !important;    /* Adjust font color */
-    font-family: Goudy Bookletter 1911, sans-serif !important; /* Adjust font family */
+    font-size: 20px !important;
+    font-family: Goudy Bookletter 1911, sans-serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
