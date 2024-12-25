@@ -266,8 +266,12 @@ for transaction in transactions[str(year)]:
 
             log_output += "-" * 104 + "\n"
 
+# doing both .dr and .dd because its diff from 3.11 and 3.12
 st.markdown(""" 
 <style>
+.st-dr {
+    -webkit-text-fill-color: white !important;
+}
 .st-dd {
     -webkit-text-fill-color: white !important;
 }
