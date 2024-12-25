@@ -85,14 +85,6 @@ def load_stats_data():
 
         # Convert to a list of dictionaries
         data = data.to_dict(orient="records")
-        
-        """  # Group by sleeper_id
-        grouped_data = {}
-        for entry in data:
-            sleeper_id = entry['sleeper_id']
-            if sleeper_id not in grouped_data:
-                grouped_data[sleeper_id] = []
-            grouped_data[sleeper_id].append(entry) """
 
         # Write grouped_data to file
         with open(stats_data_file, "w") as file:
