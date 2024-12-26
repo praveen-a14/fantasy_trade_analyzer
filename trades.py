@@ -226,7 +226,7 @@ for transaction in transactions[str(year)]:
                             if roster_id not in trade_details:
                                 trade_details[roster_id] = {"team": display_name, "items": []}
                             
-                            trade_details[roster_id]["items"].append(f"{player[0].get('player_display_name')} ({player[0].get('position')}) - Rest of Season: {first_season_ppg} PPG ({first_season_weeks} Gs), Future Seasons: {not_first_season_ppg} PPG ({not_first_season_weeks} Gs)")
+                            trade_details[roster_id]["items"].append(f"{player[0].get('player_display_name')} ({player[0].get('position')}) - RoS: {first_season_ppg} PPG ({first_season_weeks} Gs), Future: {not_first_season_ppg} PPG ({not_first_season_weeks} Gs)")
                     else:
                         # Player not found in stats
                         log_output += f"Player ID {player_id} not found in player data.\n"
@@ -234,6 +234,8 @@ for transaction in transactions[str(year)]:
                                 
             if transaction['draft_picks']:
                 for pick in transaction['draft_picks']:
+                    draft_pick_points = 0
+                    draft_pick_weeks = 1
                     original = next((r for r in rosters if r['roster_id'] == pick['roster_id']), None)
                     reciever = next((r for r in rosters if r['roster_id'] == pick['owner_id']), None)
                 
@@ -252,11 +254,20 @@ for transaction in transactions[str(year)]:
                             for player in picks[pick['season']]:
                                 if player['round'] == pick['round'] and player['draft_slot'] == position:
                                     id = player['metadata']['player_id']
-                                    info = players.loc[id]
-                                    name = f"{info['first_name']} {info['last_name']} ({info['position']})"
-                                    trade_details[pick['owner_id']]["items"].append(f"{pick['season']} Round {pick['round']} Pick (Via {orig_display}) (Became: {pick['round']}.{position} - {name})")
+                                    not_played_info = players.loc[id]
+                                    info = player_info.get(float(id), [])
+                                    if info:
+                                        for week in info: 
+                                            draft_pick_points += week['fantasy_points_ppr']
+                                            draft_pick_weeks += 1
+                                            draft_pick_ppg = draft_pick_points / draft_pick_weeks
+                                            draft_pick_ppg = round(draft_pick_ppg, 2)
+                                            name = f"{week['player_display_name']} ({week['position']})"
+                                        trade_details[pick['owner_id']]["items"].append(f"{pick['season']} RD {pick['round']} (Via {orig_display}) ({pick['round']}.{position} - {name}: {draft_pick_ppg} PPG ({draft_pick_weeks} Gs))")
+                                    else:
+                                        trade_details[pick['owner_id']]["items"].append(f"{pick['season']} RD {pick['round']} (Via {orig_display}) ({pick['round']}.{position} - {not_played_info['first_name']} {not_played_info['last_name']} ({not_played_info['position']}))")
                         else:
-                            trade_details[pick['owner_id']]["items"].append(f"{pick['season']} Round {pick['round']} Pick (Via {orig_display})")
+                            trade_details[pick['owner_id']]["items"].append(f"{pick['season']} RD {pick['round']} (Via {orig_display})")
 
             # Output the trade details for all involved teams
             for roster_id, data in trade_details.items():
@@ -274,6 +285,9 @@ st.markdown("""
 }
 .st-dd {
     -webkit-text-fill-color: white !important;
+}
+.st-d1 {
+    color: white !important;
 }
 textarea {
     font-size: 20px !important;
